@@ -1,5 +1,6 @@
 package org.zerock.apiserver.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class PageResponseDTO<E> {
     // 총 페이지수, 이전 시작 페이지, 다음 시작 페이지, 총 페이지, 현재 페이지
     private int totalCount, prevPage, nextPage, totalPage, current;
 
+    @Builder(builderMethodName = "withAll") // 메소드 이름 지정
     public PageResponseDTO(List<E> dtoList, PageRequestDTO pageRequestDTO, long total){
 
         this.dtoList = dtoList;
