@@ -5,6 +5,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -76,6 +80,49 @@ public class CustomFileUtil {
         }// end for
 
         return uploadNames;
+    }
+
+    public ResponseEntity<Resource> getFile(String fileName){
+
+        Resource resource = new FileSystemResource(uploadPath+File.separator+fileName);
+
+        if(!resource.isReadable()){
+            resource = new FileSystemResource(uploadPath+File.separator+"default.jpg");
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+
+        // MIME 타입 지정
+        try {
+                                                   // 확장자 만들어주는 메소드
+            headers.add("Content-Type", Files.probeContentType(resource.getFile().toPath()));
+        } catch (IOException e) {
+            throw new RuntimeException();
+        }
+
+        return ResponseEntity.ok().headers(headers).body(resource);
+    }
+
+    public void deleteFiles(List<String> fileNames){
+
+        if(fileNames == null || fileNames.size() == 0){ return;}
+
+        fileNames.forEach(fileName -> {
+
+            //썸네일 삭제
+           String thumbnameFileName = "s_"+fileName;
+
+           Path thumbnailPath = Paths.get(uploadPath, thumbnameFileName);
+           Path filePath = Paths.get(uploadPath, fileName);
+
+           try {
+               Files.deleteIfExists(filePath);
+               Files.deleteIfExists(thumbnailPath);
+           }catch (IOException e){
+               throw new RuntimeException(e.getMessage());
+           }
+
+        });
     }
 
 }
