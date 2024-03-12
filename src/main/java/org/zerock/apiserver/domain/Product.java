@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+//exclude를 안하면 테이블에서 두번 가져옴 (지연로딩)
 @ToString(exclude = "imageList")
 public class Product {
 
@@ -42,6 +43,10 @@ public class Product {
 
     public void changePdesc(String pdesc) {
         this.pdesc = pdesc;
+    }
+
+    public void changeDel(boolean delFlag){
+        this.delFlag = delFlag;
     }
 
     public void addImage(ProductImage image){
