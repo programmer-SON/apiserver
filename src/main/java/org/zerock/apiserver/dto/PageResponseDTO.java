@@ -26,11 +26,11 @@ public class PageResponseDTO<E> {
     private int totalCount, prevPage, nextPage, totalPage, current;
 
     @Builder(builderMethodName = "withAll") // 메소드 이름 지정
-    public PageResponseDTO(List<E> dtoList, PageRequestDTO pageRequestDTO, long total){
+    public PageResponseDTO(List<E> dtoList, PageRequestDTO pageRequestDTO, long totalCount){
 
         this.dtoList = dtoList;
         this.pageRequestDTO = pageRequestDTO;
-        this.totalCount = (int)total;
+        this.totalCount = (int)totalCount;
 
         //끝페이지 end
         int end = (int) (Math.ceil(pageRequestDTO.getPage() / 10.0))* 10;

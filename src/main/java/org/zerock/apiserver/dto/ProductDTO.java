@@ -33,6 +33,6 @@ public class ProductDTO {
 
     @Builder.Default
     // 조회할때 쓰는 파일이름
-    private List<String> uploaderFileNames = new ArrayList<>();
+    private List<String> uploadFileNames = new ArrayList<>();
 
 }
