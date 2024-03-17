@@ -14,6 +14,7 @@ import org.zerock.apiserver.util.CustomFileUtil;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @Log4j2
@@ -73,4 +74,39 @@ public class ProductController {
 
         return productService.get(pno);
     }
+
+    @PutMapping("/{pno}")
+    public Map<String, String> modify(@PathVariable Long pno, ProductDTO productDTO) {
+
+        //업로드 저장
+        productDTO.setPno(pno);
+
+        //old product -> 어떤 파일이 지웠는지 알기위해 씀
+        ProductDTO oldProductDTO = productService.get(pno);
+
+        //file upload
+        List<MultipartFile> files = productDTO.getFiles(); //새로운 파일
+        List<String> currentUploadFileNames = fileUtil.saveFiles(files);
+
+        //keep files String
+        List<String> uploadedFileNames = productDTO.getUploadFileNames(); // 유지되고 있는 파일들
+
+        if (currentUploadFileNames != null && !currentUploadFileNames.isEmpty()) {
+            uploadedFileNames.addAll(currentUploadFileNames);
+        }
+
+        productService.modify(productDTO);
+
+        List<String> oldFileNames = oldProductDTO.getUploadFileNames();
+        if (oldFileNames != null && !oldFileNames.isEmpty()) {
+
+            List<String> removeFiles = oldFileNames.stream().
+                    filter(fileName -> uploadedFileNames.indexOf(fileName) == -1).collect(Collectors.toList());
+
+            fileUtil.deleteFiles(removeFiles);
+        }
+
+        return Map.of("RESULT", "SUCCESS");
+    }
+
 }
