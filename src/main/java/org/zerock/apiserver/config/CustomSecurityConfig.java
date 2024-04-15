@@ -32,6 +32,11 @@ public class CustomSecurityConfig {
         //Request 위조 방지
         http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
 
+        //로그인 임시양식
+        http.formLogin(config -> {
+            config.loginPage("/api/member/login");
+        });
+
         return http.build();
     }
 
